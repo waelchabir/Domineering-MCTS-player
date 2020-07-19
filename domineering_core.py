@@ -2,7 +2,7 @@ from collections import namedtuple
 from random import choice
 from sys import stdout
 
-import Constants as cst
+import config as conf
 from utils import update_tuple
 from monte_carlo_tree_search import MCTS, Node
 
@@ -11,17 +11,17 @@ _DOMB = namedtuple("DomineeringBoard", "tup turn winner terminal")
 
 def _find_winner(tup, next_turn):
     "Returns None if no winner, or the code of the winning player"
-    if cst.PLAYERS_ORIENTATION[next_turn] == cst.VERTICAL_ORIENTATION:
-        for i, value in enumerate(tup[:-cst.BOARD_Y_SIZE]):
-            if value == cst.NONE_PLAYER and tup[i + cst.BOARD_Y_SIZE] == cst.NONE_PLAYER:
-                return cst.NONE_PLAYER
+    if conf.PLAYERS_ORIENTATION[next_turn] == conf.VERTICAL_ORIENTATION:
+        for i, value in enumerate(tup[:-conf.BOARD_Y_SIZE]):
+            if value == conf.NONE_PLAYER and tup[i + conf.BOARD_Y_SIZE] == conf.NONE_PLAYER:
+                return conf.NONE_PLAYER
         return not next_turn
-    if cst.PLAYERS_ORIENTATION[next_turn] == cst.HORIZONTAL_ORIENTATION:
+    if conf.PLAYERS_ORIENTATION[next_turn] == conf.HORIZONTAL_ORIENTATION:
         for i, value in enumerate(tup[:-1]):
-            if i % cst.BOARD_Y_SIZE < cst.BOARD_Y_SIZE - 2 \
-                    and value == cst.NONE_PLAYER \
-                    and tup[i + 1] == cst.NONE_PLAYER:
-                return cst.NONE_PLAYER
+            if i % conf.BOARD_Y_SIZE < conf.BOARD_Y_SIZE - 2 \
+                    and value == conf.NONE_PLAYER \
+                    and tup[i + 1] == conf.NONE_PLAYER:
+                return conf.NONE_PLAYER
         return not next_turn
 
 
@@ -66,54 +66,54 @@ class DomineeringBoard(_DOMB, Node):
 
     def make_move(board, index):
         tup = board.tup
-        if cst.PLAYERS_ORIENTATION[board.turn] == cst.HORIZONTAL_ORIENTATION:
+        if conf.PLAYERS_ORIENTATION[board.turn] == conf.HORIZONTAL_ORIENTATION:
             tup = update_tuple(tup, index, board.turn)
             tup = update_tuple(tup, index + 1, board.turn)
-        if cst.PLAYERS_ORIENTATION[board.turn] == cst.VERTICAL_ORIENTATION:
+        if conf.PLAYERS_ORIENTATION[board.turn] == conf.VERTICAL_ORIENTATION:
             tup = update_tuple(tup, index, board.turn)
-            tup = update_tuple(tup, index + cst.BOARD_Y_SIZE, board.turn)
+            tup = update_tuple(tup, index + conf.BOARD_Y_SIZE, board.turn)
         turn = not board.turn
         winner = _find_winner(tup, turn)
         is_terminal = winner is not None
         return DomineeringBoard(tup, turn, winner, is_terminal)
 
     def is_valid_move(board, index):
-        x = index // cst.BOARD_Y_SIZE
-        y = index % cst.BOARD_Y_SIZE
-        if x >= cst.BOARD_X_SIZE \
-                or y >= cst.BOARD_Y_SIZE \
+        x = index // conf.BOARD_Y_SIZE
+        y = index % conf.BOARD_Y_SIZE
+        if x >= conf.BOARD_X_SIZE \
+                or y >= conf.BOARD_Y_SIZE \
                 or x < 0 \
                 or y < 0:
             return False
-        if cst.PLAYERS_ORIENTATION[board.turn] == cst.HORIZONTAL_ORIENTATION:
+        if conf.PLAYERS_ORIENTATION[board.turn] == conf.HORIZONTAL_ORIENTATION:
             # implement horizontal player validation
-            if y >= cst.BOARD_Y_SIZE - 1:
+            if y >= conf.BOARD_Y_SIZE - 1:
                 return False
-            if board.tup[index] is not cst.NONE_PLAYER \
-                    or board.tup[index + 1] is not cst.NONE_PLAYER:
+            if board.tup[index] is not conf.NONE_PLAYER \
+                    or board.tup[index + 1] is not conf.NONE_PLAYER:
                 return False
             return True
-        if cst.PLAYERS_ORIENTATION[board.turn] == cst.VERTICAL_ORIENTATION:
+        if conf.PLAYERS_ORIENTATION[board.turn] == conf.VERTICAL_ORIENTATION:
             # implement horizontal player validation
-            if x >= cst.BOARD_X_SIZE - 1:
+            if x >= conf.BOARD_X_SIZE - 1:
                 return False
-            if board.tup[index] is not cst.NONE_PLAYER \
-                    or board.tup[index + cst.BOARD_Y_SIZE] is not cst.NONE_PLAYER:
+            if board.tup[index] is not conf.NONE_PLAYER \
+                    or board.tup[index + conf.BOARD_Y_SIZE] is not conf.NONE_PLAYER:
                 return False
             return True
 
     def to_pretty_string(board):
         stdout.write('\n ')
-        {stdout.write(' {}'.format(i)) for i in range(1, cst.BOARD_X_SIZE+1)}
+        {stdout.write(' {}'.format(i)) for i in range(1, conf.BOARD_X_SIZE + 1)}
         stdout.write('\n')
-        for i in range(0, cst.BOARD_X_SIZE):
+        for i in range(0, conf.BOARD_X_SIZE):
             stdout.write('{}|'.format(i+1))
-            for j in range(0, cst.BOARD_Y_SIZE):
-                if board.tup[i * cst.BOARD_Y_SIZE + j] is cst.NONE_PLAYER:
-                    stdout.write(cst.NONE_ORIENTATION)
-                if board.tup[i * cst.BOARD_Y_SIZE + j] == cst.BLACK_PLAYER:
-                    stdout.write(cst.PLAYERS_ORIENTATION[cst.BLACK_PLAYER])
-                if board.tup[i * cst.BOARD_Y_SIZE + j] == cst.WHITE_PLAYER:
-                    stdout.write(cst.PLAYERS_ORIENTATION[cst.WHITE_PLAYER])
+            for j in range(0, conf.BOARD_Y_SIZE):
+                if board.tup[i * conf.BOARD_Y_SIZE + j] is conf.NONE_PLAYER:
+                    stdout.write(conf.NONE_ORIENTATION)
+                if board.tup[i * conf.BOARD_Y_SIZE + j] == conf.BLACK_PLAYER:
+                    stdout.write(conf.PLAYERS_ORIENTATION[conf.BLACK_PLAYER])
+                if board.tup[i * conf.BOARD_Y_SIZE + j] == conf.WHITE_PLAYER:
+                    stdout.write(conf.PLAYERS_ORIENTATION[conf.WHITE_PLAYER])
                 stdout.write('|')
             stdout.write('\n')

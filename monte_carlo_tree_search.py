@@ -1,16 +1,9 @@
-"""
-A minimal implementation of Monte Carlo tree search (MCTS) in Python 3
-Luke Harold Miles, July 2019, Public Domain Dedication
-See also https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
-https://gist.github.com/qpwo/c538c6f73727e254fdc7fab81024f6e1
-"""
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import math
 
 
 class MCTS:
-    "Monte Carlo tree searcher. First rollout the tree then choose a move."
 
     def __init__(self, exploration_weight=1):
         self.Q = defaultdict(int)  # total reward of each node
@@ -49,8 +42,6 @@ class MCTS:
             if node not in self.children or not self.children[node]:
                 # node is either unexplored or terminal
                 return path
-            # print("self.children[node]: {}".format(self.children[node]))
-            # print("self.children.keys(): {}".format(self.children.keys()))
             unexplored = self.children[node] - self.children.keys()
             if unexplored:
                 n = unexplored.pop()
@@ -101,8 +92,6 @@ class MCTS:
 class Node(ABC):
     """
     A representation of a single board state.
-    MCTS works by constructing a tree of these Nodes.
-    Could be e.g. a chess or checkers board state.
     """
 
     @abstractmethod
@@ -122,7 +111,7 @@ class Node(ABC):
 
     @abstractmethod
     def reward(self):
-        "Assumes `self` is terminal node. 1=win, 0=loss, .5=tie, etc"
+        "return the reward after a complete playout: 1=win, 0=loss"
         return 0
 
     @abstractmethod
