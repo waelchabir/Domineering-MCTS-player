@@ -1,6 +1,6 @@
 # Board size
-BOARD_X_SIZE = 3
-BOARD_Y_SIZE = 3
+BOARD_X_SIZE = 4
+BOARD_Y_SIZE = 4
 
 # Players color
 NONE_PLAYER = None
@@ -12,6 +12,10 @@ VERTICAL_ORIENTATION = "v"
 HORIZONTAL_ORIENTATION = "h"
 NONE_ORIENTATION = "-"
 
-# Players orientations
+# Players orientation
 PLAYERS_ORIENTATION = {BLACK_PLAYER: VERTICAL_ORIENTATION,
                        WHITE_PLAYER: HORIZONTAL_ORIENTATION}
+
+# Players name
+PLAYERS_NAME = {BLACK_PLAYER: 'BLACK PLAYER',
+                WHITE_PLAYER: 'WHITE PLAYER'}

@@ -18,7 +18,9 @@ def _find_winner(tup, next_turn):
         return not next_turn
     if cst.PLAYERS_ORIENTATION[next_turn] == cst.HORIZONTAL_ORIENTATION:
         for i, value in enumerate(tup[:-1]):
-            if value == cst.NONE_PLAYER and tup[i + 1] == cst.NONE_PLAYER:
+            if i % cst.BOARD_Y_SIZE < cst.BOARD_Y_SIZE - 2 \
+                    and value == cst.NONE_PLAYER \
+                    and tup[i + 1] == cst.NONE_PLAYER:
                 return cst.NONE_PLAYER
         return not next_turn
 
@@ -31,7 +33,9 @@ class DomineeringBoard(_DOMB, Node):
         for i, value in enumerate(board.tup):
             if (value is None) and (board.is_valid_move(i)):
                 empty_spots.append(i)
-        # [i for i, value in enumerate(board.tup) if (value is None) and (board.is_valid_move(i))]
+        if len(empty_spots) == 0:
+            print("Empty spots found")
+
         return board.make_move(choice(empty_spots))
 
     def is_terminal(board):
@@ -64,7 +68,7 @@ class DomineeringBoard(_DOMB, Node):
         tup = board.tup
         if cst.PLAYERS_ORIENTATION[board.turn] == cst.HORIZONTAL_ORIENTATION:
             tup = update_tuple(tup, index, board.turn)
-            tup = update_tuple(tup, index+1, board.turn)
+            tup = update_tuple(tup, index + 1, board.turn)
         if cst.PLAYERS_ORIENTATION[board.turn] == cst.VERTICAL_ORIENTATION:
             tup = update_tuple(tup, index, board.turn)
             tup = update_tuple(tup, index + cst.BOARD_Y_SIZE, board.turn)
@@ -74,7 +78,7 @@ class DomineeringBoard(_DOMB, Node):
         return DomineeringBoard(tup, turn, winner, is_terminal)
 
     def is_valid_move(board, index):
-        x = index / cst.BOARD_Y_SIZE
+        x = index // cst.BOARD_Y_SIZE
         y = index % cst.BOARD_Y_SIZE
         if x >= cst.BOARD_X_SIZE \
                 or y >= cst.BOARD_Y_SIZE \
@@ -99,15 +103,17 @@ class DomineeringBoard(_DOMB, Node):
             return True
 
     def to_pretty_string(board):
+        stdout.write('\n ')
+        {stdout.write(' {}'.format(i)) for i in range(1, cst.BOARD_X_SIZE+1)}
         stdout.write('\n')
         for i in range(0, cst.BOARD_X_SIZE):
-            stdout.write('|')
+            stdout.write('{}|'.format(i+1))
             for j in range(0, cst.BOARD_Y_SIZE):
-                if board.tup[i*cst.BOARD_Y_SIZE + j] is cst.NONE_PLAYER:
+                if board.tup[i * cst.BOARD_Y_SIZE + j] is cst.NONE_PLAYER:
                     stdout.write(cst.NONE_ORIENTATION)
-                if board.tup[i*cst.BOARD_Y_SIZE + j] == cst.BLACK_PLAYER:
+                if board.tup[i * cst.BOARD_Y_SIZE + j] == cst.BLACK_PLAYER:
                     stdout.write(cst.PLAYERS_ORIENTATION[cst.BLACK_PLAYER])
-                if board.tup[i*cst.BOARD_Y_SIZE + j] == cst.WHITE_PLAYER:
+                if board.tup[i * cst.BOARD_Y_SIZE + j] == cst.WHITE_PLAYER:
                     stdout.write(cst.PLAYERS_ORIENTATION[cst.WHITE_PLAYER])
                 stdout.write('|')
             stdout.write('\n')

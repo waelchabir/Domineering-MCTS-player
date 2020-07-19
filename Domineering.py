@@ -1,3 +1,5 @@
+from sys import stdout
+
 from monte_carlo_tree_search import MCTS
 from domineering_core import DomineeringBoard
 import Constants as cst
@@ -17,7 +19,7 @@ def play_game():
     while True:
         row_col = input("enter row,col: ")
         row, col = map(int, row_col.split(","))
-        index = 3 * (row - 1) + (col - 1)
+        index = cst.BOARD_Y_SIZE * (row - 1) + (col - 1)
         if (board.tup[index] is not None) and (board.is_valid_move(index+cst.BOARD_Y_SIZE)):
             raise RuntimeError("Invalid move")
         board = board.make_move(index)
@@ -31,6 +33,7 @@ def play_game():
         board = tree.choose(board)
         board.to_pretty_string()
         if board.terminal:
+            stdout.write("\nWinner is {}".format(cst.PLAYERS_NAME[board.winner]))
             break
 
 if __name__ == "__main__":
